@@ -34,7 +34,7 @@ def connect_with_middleware(contract_json):
     abi=abi
   )
 
-    return w3, contract
+  return w3, contract
 
 def is_ordered_block(w3, block_num):
 
@@ -70,7 +70,7 @@ def is_ordered_block(w3, block_num):
       max_priority = tx.get("maxPriorityFeePerGas",0)
       max_fee = tx.get("maxFeePerGas",0)
 
-        priority_fee = min(
+      priority_fee = min(
         max_priority,
         max_fee - base_fee
       )
