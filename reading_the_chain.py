@@ -54,24 +54,21 @@ def is_ordered_block(w3, block_num):
 
     
     # Case 2: After EIP-1559
-    # Type 0
+    # Type 0: priority fee = gasPrice - baseFeePerGas
+    # total fee = priority_fee + baseFeePerGas
 
     elif "gasPrice" in tx and "maxPriorityFeePerGas" in tx:
-      fee = tx["gasPrice"]     
+      priority_fee = tx["gasPrice"] - base_fee
+      fee = priority_fee + base_fee
+    
 
-  
     # Case 3: After EIP-1559
-    # Type 2
+    # Type 2: priority fee = min(maxPriorityFeePerGas, maxFeePerGas-baseFeePerGas)
+    # total fee = priority_fee + baseFeePerGas
 
     else:
       max_priority = tx.get("maxPriorityFeePerGas",0)
       max_fee = tx.get("maxFeePerGas",0)
-
-      fee = tx.get("effectiveGasPrice")
-
-      if fee is None:
-        max_priority = tx.get("maxPriorityFeePerGas",0)
-        max_fee = tx.get("maxFeePerGas",0)
 
       priority_fee = min(
         max_priority,
