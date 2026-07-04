@@ -54,12 +54,12 @@ def is_ordered_block(w3, block_num):
 
     
     # Case 2: After EIP-1559
-    # Type 0: priority fee = gasPrice - baseFeePerGas
-    # total fee = priority_fee + baseFeePerGas
+    # Type 0: fee = gasPrice - base_fee
+ 
 
     elif "gasPrice" in tx and "maxPriorityFeePerGas" in tx:
-      priority_fee = tx["gasPrice"] - base_fee
-      fee = priority_fee + base_fee
+      fee = tx["gasPrice"] - base_fee      
+
     
 
     # Case 3: After EIP-1559
