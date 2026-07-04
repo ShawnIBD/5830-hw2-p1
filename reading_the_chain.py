@@ -11,18 +11,17 @@ from web3.providers.rpc import HTTPProvider
 # infura_url = f"https://mainnet.infura.io/v3/{infura_token}"
 
 def connect_to_eth():
-	url = "https://eth-mainnet.g.alchemy.com/v2/_iHyNkK24W2Na_hbKuoyk"  
+  url = "https://eth-mainnet.g.alchemy.com/v2/_iHyNkK24W2Na_hbKuoyk"  
   w3 = Web3(HTTPProvider(url))
   assert w3.is_connected(), f"Failed to connect to provider at {url}"
-	return w3
-
+  return w3
 
 def connect_with_middleware(contract_json):
-	with open(contract_json, "r") as f:
-	  d = json.load(f)
-	  d = d['bsc']
-	  address = d['address']
-	  abi = d['abi']
+  with open(contract_json, "r") as f:
+    d = json.load(f)
+    d = d['bsc']
+    address = d['address']
+    abi = d['abi']
 
   url = "https://bnb-testnet.g.alchemy.com/v2/7WIYsxR8on_bP-1YuFskn"
   w3 = Web3(HTTPProvider(url))
@@ -35,8 +34,7 @@ def connect_with_middleware(contract_json):
     abi=abi
   )
 
-	return w3, contract
-
+  return w3, contract
 
 def is_ordered_block(w3, block_num):
 	"""
@@ -51,8 +49,8 @@ def is_ordered_block(w3, block_num):
 
 	Conveniently, most type 2 transactions set the gasPrice field to be min( tx.maxPriorityFeePerGas + block.baseFeePerGas, tx.maxFeePerGas )
 	"""
-	block = w3.eth.get_block(block_num, full_transactions=True)
-	ordered = False
+  block = w3.eth.get_block(block_num, full_transactions=True)
+  ordered = False
 
   base_fee = block.get("baseFeePerGas",0)
   fees = []
@@ -83,7 +81,7 @@ def is_ordered_block(w3, block_num):
       max_priority = tx.get("maxPriorityFeePerGas",0)
       max_fee = tx.get("maxFeePerGas",0)
 
-      priority_fee = min(
+        priority_fee = min(
         max_priority,
         max_fee - base_fee
       )
@@ -94,7 +92,7 @@ def is_ordered_block(w3, block_num):
     if fees == sorted (fees, reverse = True):
       ordered = True
 
-	return ordered
+  return ordered
 
 
 def get_contract_values(contract, admin_address, owner_address):
@@ -111,7 +109,7 @@ def get_contract_values(contract, admin_address, owner_address):
 	check on available contract functions and transactions on the block explorer at
 	https://testnet.bscscan.com/address/0xaA7CAaDA823300D18D3c43f65569a47e78220073
 	"""
-	default_admin_role = int.to_bytes(0, 32, byteorder="big")
+  default_admin_role = int.to_bytes(0, 32, byteorder="big")
 
 	# TODO complete the following lines by performing contract calls
 
@@ -119,7 +117,7 @@ def get_contract_values(contract, admin_address, owner_address):
   onchain_root = contract.functions.merkleRoot().call()
 
   # Check the contract to see if the address "admin_address" has the role "default_admin_role"
-	has_role = contract.functions.hasRole(
+  has_role = contract.functions.hasRole(
     default_admin_role,
     admin_address
   ).call()
@@ -127,7 +125,7 @@ def get_contract_values(contract, admin_address, owner_address):
 	# Call the contract to get the prime owned by "owner_address"
   prime = contract.functions.getPrimeByOwner(owner_address).call()
 
-	return onchain_root, has_role, prime
+  return onchain_root, has_role, prime
 
 
 """
