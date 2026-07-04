@@ -68,7 +68,7 @@ def is_ordered_block(w3, block_num):
     # Type 0: priority fee = gasPrice - baseFeePerGas
     # total fee = priority_fee + baseFeePerGas
 
-    else if "gasPrice" in tx and "maxPriorityFeePerGas" in tx:
+    elif "gasPrice" in tx and "maxPriorityFeePerGas" in tx:
       priority_fee = tx["gasPrice"] - base_fee
       fee = priority_fee + base_fee
     
