@@ -81,10 +81,10 @@ def is_ordered_block(w3, block_num):
     
       fees.append(fee)
 
-      if fees == sorted (fees, reverse = True):
+  if fees == sorted (fees, reverse = True):
         ordered = True
 
-    return ordered
+  return ordered
 
 
 def get_contract_values(contract, admin_address, owner_address):
