@@ -44,44 +44,47 @@ def is_ordered_block(w3, block_num):
   base_fee = block.get("baseFeePerGas",0)
   fees = []
 
-  for tx in block["transactions"]:
+  transactions = block["transactions"]
 
-    # Case 1: Before EIP-1559
-    # gasPrice directly represents total fee paid
+  if all(["gasPrice" in tx for tx in transactions]):
 
-    if "gasPrice" in tx and "maxPriorityFeePerGas" not in tx:
+    for tx in transactions:
       fee = tx["gasPrice"]
-
+      fees.append(fee)
+  
+  else:
     
-    # Case 2: After EIP-1559
-    # Type 0: priority fee = gasPrice - baseFeePerGas
-    # total fee = priority_fee + baseFeePerGas
+    for tx in transactions:
 
-    elif "gasPrice" in tx and "maxPriorityFeePerGas" in tx:
-      priority_fee = tx["gasPrice"] - base_fee
-      fee = priority_fee + base_fee
+    # Case 2: After EIP-1559, Type 2
+    # If a transaction has maxPriorityFeePerGas and maxFeePerGas
+    # We should use EIP-1559 formula and ignore gasPrice
+
+      if "maxPriorityFeePerGas" in tx and "maxFeePerGas" in tx:
+        priority_fee = min(
+          tx["maxPriorityFeePerGas"],
+          tx["maxFeePerGas"] - base_fee
+        )
+
+        # Total fee paid per gas for type 2 transaction
+        fee = priority_fee + base_fee
+
+
+      # Type 0
+      # Use gasPrice directly
+
+      elif "gasPrice" in tx:
+        fee = tx["gasPrice"]
     
-
-    # Case 3: After EIP-1559
-    # Type 2: priority fee = min(maxPriorityFeePerGas, maxFeePerGas-baseFeePerGas)
-    # total fee = priority_fee + baseFeePerGas
-
-    else:
-      max_priority = tx.get("maxPriorityFeePerGas",0)
-      max_fee = tx.get("maxFeePerGas",0)
-
-      priority_fee = min(
-        max_priority,
-        max_fee - base_fee
-      )
-      fee = priority_fee + base_fee
+      else:
+        fee = 0
     
-    fees.append(fee)
+      fees.append(fee)
 
-    if fees == sorted (fees, reverse = True):
-      ordered = True
+      if fees == sorted (fees, reverse = True):
+        ordered = True
 
-  return ordered
+    return ordered
 
 
 def get_contract_values(contract, admin_address, owner_address):
